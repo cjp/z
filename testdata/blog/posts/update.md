@@ -2,7 +2,7 @@ title: Second post
 date: 29-08-2015
 ---
 
-# {{title}}
+# Second post
 
 This is my second post
 

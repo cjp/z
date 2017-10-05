@@ -2,7 +2,7 @@ title: First post
 date: 28-08-2015
 ---
 
-# {{title}}
+# First post
 
 This is my first post
 
