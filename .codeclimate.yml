@@ -1,0 +1,15 @@
+engines:
+  gofmt:
+    enabled: true
+  golint:
+    enabled: true
+    config:
+      min_confidence: 0.9
+  govet:
+    enabled: true
+  markdownlint:
+    enabled: true
+ratings:
+  paths:
+    - "**.go"
+    - "**.md"

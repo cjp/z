@@ -2,6 +2,7 @@ z
 =
 
 [![Build Status](https://travis-ci.org/cjp/z.svg?branch=master)](https://travis-ci.org/cjp/z)
+[![Code Climate](https://codeclimate.com/github/cjp/z/badges/gpa.svg)](https://codeclimate.com/github/cjp/z)
 
 `z` is an absurdly minimal static site generator written in Go.
 
