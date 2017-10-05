@@ -10,7 +10,6 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strings"
-	"text/template"
 	"time"
 
 	"github.com/eknkc/amber"
@@ -146,52 +145,13 @@ func getVars(path string, globals Vars) (Vars, string, error) {
 	}
 }
 
-// Render expanding zs plugins and variables
-func render(s string, vars Vars) (string, error) {
-	delim_open := "{{"
-	delim_close := "}}"
-
-	out := &bytes.Buffer{}
-	for {
-		if from := strings.Index(s, delim_open); from == -1 {
-			out.WriteString(s)
-			return out.String(), nil
-		} else {
-			if to := strings.Index(s, delim_close); to == -1 {
-				return "", fmt.Errorf("Close delim not found")
-			} else {
-				out.WriteString(s[:from])
-				cmd := s[from+len(delim_open) : to]
-				s = s[to+len(delim_close):]
-				m := strings.Fields(cmd)
-				if len(m) == 1 {
-					if v, ok := vars[m[0]]; ok {
-						out.WriteString(v)
-						continue
-					}
-				}
-				if res, err := run(vars, m[0], m[1:]...); err == nil {
-					out.WriteString(res)
-				} else {
-					fmt.Println(err)
-				}
-			}
-		}
-	}
-	return s, nil
-}
-
 // Renders markdown with the given layout into html expanding all the macros
 func buildMarkdown(path string, w io.Writer, vars Vars) error {
 	v, body, err := getVars(path, vars)
 	if err != nil {
 		return err
 	}
-	content, err := render(body, v)
-	if err != nil {
-		return err
-	}
-	v["content"] = string(blackfriday.MarkdownCommon([]byte(content)))
+	v["content"] = string(blackfriday.MarkdownCommon([]byte(body)))
 	if w == nil {
 		out, err := os.Create(filepath.Join(PUBDIR, renameExt(path, "", ".html")))
 		if err != nil {
@@ -200,35 +160,7 @@ func buildMarkdown(path string, w io.Writer, vars Vars) error {
 		defer out.Close()
 		w = out
 	}
-	if strings.HasSuffix(v["layout"], ".amber") {
-		return buildAmber(filepath.Join(ZSDIR, v["layout"]), w, v)
-	} else {
-		return buildHTML(filepath.Join(ZSDIR, v["layout"]), w, v)
-	}
-}
-
-// Renders text file expanding all variable macros inside it
-func buildHTML(path string, w io.Writer, vars Vars) error {
-	v, body, err := getVars(path, vars)
-	if err != nil {
-		return err
-	}
-	if body, err = render(body, v); err != nil {
-		return err
-	}
-	tmpl, err := template.New("").Delims("<%", "%>").Parse(body)
-	if err != nil {
-		return err
-	}
-	if w == nil {
-		f, err := os.Create(filepath.Join(PUBDIR, path))
-		if err != nil {
-			return err
-		}
-		defer f.Close()
-		w = f
-	}
-	return tmpl.Execute(w, vars)
+        return buildAmber(filepath.Join(ZSDIR, v["layout"]), w, v)
 }
 
 // Renders .amber file into .html
@@ -253,10 +185,6 @@ func buildAmber(path string, w io.Writer, vars Vars) error {
 		return err
 	}
 
-	if body, err = render(string(htmlBuf.Bytes()), v); err != nil {
-		return err
-	}
-
 	if w == nil {
 		f, err := os.Create(filepath.Join(PUBDIR, renameExt(path, ".amber", ".html")))
 		if err != nil {
@@ -265,7 +193,7 @@ func buildAmber(path string, w io.Writer, vars Vars) error {
 		defer f.Close()
 		w = f
 	}
-	_, err = io.WriteString(w, body)
+	_, err = io.WriteString(w, string(htmlBuf.Bytes()))
 	return err
 }
 
@@ -313,8 +241,6 @@ func build(path string, w io.Writer, vars Vars) error {
 	ext := filepath.Ext(path)
 	if ext == ".md" || ext == ".mkd" {
 		return buildMarkdown(path, w, vars)
-	} else if ext == ".html" || ext == ".xml" {
-		return buildHTML(path, w, vars)
 	} else if ext == ".amber" {
 		return buildAmber(path, w, vars)
 	} else if ext == ".gcss" {
