@@ -7,7 +7,6 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"strings"
 	"time"
@@ -50,41 +49,6 @@ func globals() Vars {
 		}
 	}
 	return vars
-}
-
-// run executes a command or a script. Vars define the command environment,
-// each zs var is converted into OS environemnt variable with ZS_ prefix
-// prepended.  Additional variable $ZS contains path to the zs binary. Command
-// stderr is printed to zs stderr, command output is returned as a string.
-func run(vars Vars, cmd string, args ...string) (string, error) {
-	// First check if partial exists (.amber or .html)
-	if b, err := ioutil.ReadFile(filepath.Join(ZSDIR, cmd+".amber")); err == nil {
-		return string(b), nil
-	}
-	if b, err := ioutil.ReadFile(filepath.Join(ZSDIR, cmd+".html")); err == nil {
-		return string(b), nil
-	}
-
-	var errbuf, outbuf bytes.Buffer
-	c := exec.Command(cmd, args...)
-	env := []string{"ZS=" + os.Args[0], "ZS_OUTDIR=" + PUBDIR}
-	env = append(env, os.Environ()...)
-	for k, v := range vars {
-		env = append(env, "ZS_"+strings.ToUpper(k)+"="+v)
-	}
-	c.Env = env
-	c.Stdout = &outbuf
-	c.Stderr = &errbuf
-
-	err := c.Run()
-
-	if errbuf.Len() > 0 {
-		log.Println("ERROR:", errbuf.String())
-	}
-	if err != nil {
-		return "", err
-	}
-	return string(outbuf.Bytes()), nil
 }
 
 // getVars returns list of variables defined in a text file and actual file
@@ -274,7 +238,7 @@ func buildAll(watch bool) {
 			} else if info.ModTime().After(lastModified) {
 				if !modified {
 					// First file in this build cycle is about to be modified
-					run(vars, "prehook")
+					// TODO: future prehook action
 					modified = true
 				}
 				log.Println("build:", path)
@@ -284,7 +248,7 @@ func buildAll(watch bool) {
 		})
 		if modified {
 			// At least one file in this build cycle has been modified
-			run(vars, "posthook")
+                        // TODO: future posthook action
 			modified = false
 		}
 		if !watch {
@@ -341,12 +305,6 @@ func main() {
 				}
 			}
 			fmt.Println(strings.TrimSpace(s))
-		}
-	default:
-		if s, err := run(globals(), cmd, args...); err != nil {
-			fmt.Println(err)
-		} else {
-			fmt.Println(s)
 		}
 	}
 }
