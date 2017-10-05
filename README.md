@@ -1,11 +1,14 @@
 z
 =
 
-[![Build Status](https://travis-ci.org/cjp/z.svg?branch=master)](https://travis-ci.org/zserge/zs)
+[![Build Status](https://travis-ci.org/cjp/z.svg?branch=master)](https://travis-ci.org/cjp/z)
 
-z is an absurdly minimal static site generator written in Go.
+`z` is an absurdly minimal static site generator written in Go.
 
-It's inspired by the `zs` and `zas` generators, but is even more minimal.
+It's a fork of the [zs] static site genertor, which is in turn inspired
+by the [zas] static site generator.
+
+`z` is *even more* minimal.
 
 The name is an obvious progression of minimalism.
 
@@ -23,8 +26,9 @@ Download the binaries from Github or build it manually:
 
 ## Ideology
 
-Content must be markdown. Layout templates must be
-[amber]. Stylesheets shall be [gcss].
+* Content must be markdown.
+* Layout templates must be [amber].
+* Stylesheets shall be [gcss].
 
 Keep all service files (layout pages, deployment scripts etc)
 in the `.z` subdirectory.
@@ -59,3 +63,5 @@ The software is distributed under the MIT license.
 [amber]: https://github.com/eknkc/amber/
 [YAML]: https://github.com/go-yaml/yaml
 [gcss]: https://github.com/yosssi/gcss
+[zs]: https://github.com/zserge/zs
+[zas]: https://github.com/imdario/zas
