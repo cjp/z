@@ -1,12 +1,11 @@
-z
-=
+# z
 
 [![Build Status](https://travis-ci.org/cjp/z.svg?branch=master)](https://travis-ci.org/cjp/z)
 [![Code Climate](https://codeclimate.com/github/cjp/z/badges/gpa.svg)](https://codeclimate.com/github/cjp/z)
 
 `z` is an absurdly minimal static site generator written in Go.
 
-It's a fork of the [zs] static site genertor, which is in turn inspired
+It's a fork of the [zs] static site generator, which is in turn inspired
 by the [zas] static site generator.
 
 `z` is *even more* minimal.
@@ -21,7 +20,7 @@ The name is an obvious progression of minimalism.
 
 ## Installation
 
-Download the binaries from Github or build it manually:
+Build it with go:
 
 	$ go get github.com/cjp/z
 
@@ -29,7 +28,7 @@ Download the binaries from Github or build it manually:
 
 * Content must be markdown.
 * Layout templates must be [amber].
-* Stylesheets shall be [gcss].
+* Style sheets shall be [gcss].
 
 Keep all service files (layout pages, deployment scripts etc)
 in the `.z` subdirectory.
