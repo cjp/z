@@ -124,7 +124,7 @@ func buildMarkdown(path string, w io.Writer, vars Vars) error {
 		defer out.Close()
 		w = out
 	}
-        return buildAmber(filepath.Join(ZSDIR, v["layout"]), w, v)
+	return buildAmber(filepath.Join(ZSDIR, v["layout"]), w, v)
 }
 
 // Renders .amber file into .html
@@ -248,7 +248,7 @@ func buildAll(watch bool) {
 		})
 		if modified {
 			// At least one file in this build cycle has been modified
-                        // TODO: future posthook action
+			// TODO: future posthook action
 			modified = false
 		}
 		if !watch {
